@@ -38,9 +38,11 @@ const flag = (<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="22px"
   <path fill="#424A60" d="M9,0C8.448,0,8,0.447,8,1v3v55c0,0.553,0.448,1,1,1s1-0.447,1-1V4V1C10,0.447,9.552,0,9,0z"/>
 </svg>);
 
+const active = { boxShadow: 'inset 0 0 5px black' };
+
 const Position = props => {
-  const { i, j, info } = props;
-  return (<div name={`${i}, ${j}`} id={`x${i}y${j}`} className={(!info.visible || info.visible === 'flag') ? "fieldUnit" : "visible fieldUnit"} onClick={() => {if (!props.tool) {props.flag(i, j)} else if (!info.visible) props.updateArea(props.choose(i, j))}} onContextMenu={(e) => {e.preventDefault(); props.flag(i, j)}}>
+  const { i, j, info, position } = props;
+  return (<div name={`${i}, ${j}`} id={`x${i}y${j}`} style={position.x === j && position.y === i ? active : {}} className={(!info.visible || info.visible === 'flag') ? "fieldUnit" : "visible fieldUnit"} onClick={() => {if (!props.tool) {props.flag(i, j)} else if (!info.visible) props.updateArea(props.choose(i, j))}} onContextMenu={(e) => {e.preventDefault(); props.flag(i, j)}}>
     {info.visible ? info.visible === 'flag' ? flag : info.value === 'B' ? bomb : info.value : ''}
   </div>);
 };

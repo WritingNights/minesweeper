@@ -21,7 +21,12 @@ const initialState = {
   randMines: null,
   time: 0,
   tool: true,
-  playing: true
+  playing: true,
+  position: {
+    x: 0,
+    y: 0
+  },
+  r: false
 }
 
 class Game extends React.Component {
@@ -40,6 +45,7 @@ class Game extends React.Component {
 
     this.new = this.new.bind(this);
     this.updateTool = this.updateTool.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   updateBoard() {
@@ -64,7 +70,7 @@ class Game extends React.Component {
       })
     });
     //console.table(tempBoard);
-    this.setState({ board: board, area: height * width, flags: 0, randMines: mines, time: 0, playing: true });
+    this.setState({ board: board, area: height * width, flags: 0, randMines: mines, time: 0, playing: true, position: {x: 0, y: 0} });
     gsap.fromTo('#playField', { opacity: 0 }, { opacity: 1, duration: 1 });
   }
 
@@ -167,6 +173,7 @@ class Game extends React.Component {
     }
     this.setState({ height: height, width: width, mines: mines });
     gsap.fromTo('#playField', { opacity: 0 }, { opacity: 0, duration: 2, onComplete: () => {
+      clearInterval(this.state.intervalId);
       this.updateBoard();
       this.setState({ tool: true });
     } });
@@ -185,19 +192,73 @@ class Game extends React.Component {
     }
   }
 
+  handleKeyPress(e) {
+    const { playing, tool, position, height, width } = this.state;
+    // x
+    if (e.keyCode === 88) {
+      this.setState({ tool: !tool });
+    }
+    if (e.shiftKey) {
+      // left arrow
+      if (e.keyCode === 37 && position.x > 0) {
+        this.setState({ position: { x: 0, y: position.y } })
+      // up arrow
+      } else if (e.keyCode === 38 && position.y > 0) {
+        this.setState({ position: { x: position.x, y: 0 } })
+      // right arrow
+      } else if (e.keyCode === 39 && position.x < width - 1) {
+        this.setState({ position: { x: width - 1, y: position.y } })
+      // down arrow
+      } else if (e.keyCode === 40 && position.y < height - 1) {
+        this.setState({ position: { x: position.x, y: height - 1 } })
+      }
+    } else {
+      // left arrow
+      if (e.keyCode === 37 && position.x > 0) {
+        this.setState({ position: { x: position.x - 1, y: position.y } })
+      // up arrow
+      } else if (e.keyCode === 38 && position.y > 0) {
+        this.setState({ position: { x: position.x, y: position.y - 1 } })
+      // right arrow
+      } else if (e.keyCode === 39 && position.x < width - 1) {
+        this.setState({ position: { x: position.x + 1, y: position.y } })
+      // down arrow
+      } else if (e.keyCode === 40 && position.y < height - 1) {
+        this.setState({ position: { x: position.x, y: position.y + 1 } })
+      }
+    }
+
+    // space
+    if (e.keyCode === 32) {
+      if (playing) {
+        if (tool) {
+          this.choose(position.y, position.x);
+        } else {
+          this.flag(position.y, position.x)
+        }
+      }
+    }
+  }
+
   componentDidMount() {
     this.updateBoard();
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    this.updateBoard();
+    document.removeEventListener('keydown', this.handleKeyPress);
   }
 
   render() {
-    const { flags, time, height, width, mines, tool, playing } = this.state;
+    const { flags, time, height, width, mines, tool, playing, position } = this.state;
     /*const swap = (<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="24px" height="24px" viewBox="0 0 369.949 369.949">
       <path d="M184.972,0.003C82.821,0.003,0,82.821,0,184.975s82.821,184.972,184.972,184.972c102.16,0,184.978-82.818,184.978-184.972 S287.132,0.003,184.972,0.003z M184.972,353.512c-92.927,0-168.536-75.606-168.536-168.537 c0-92.93,75.609-168.536,168.536-168.536c92.931,0,168.537,75.606,168.537,168.536 C353.509,277.905,277.908,353.512,184.972,353.512z"/>
       <path d="M239.573,51.936v139.669l10.575-10.572c5.212-5.215,13.643-5.215,18.849,0c5.206,5.209,5.206,13.646,0,18.846 l-33.32,33.32l-0.013,0.019l-9.421,9.415l-9.41-9.415l-0.023-0.019l-31.099-31.099c-5.209-5.212-5.209-13.646,0-18.849 c5.206-5.206,13.643-5.206,18.849,0l8.353,8.347V46.588c0-0.918,0.103-1.801,0.271-2.675c-9.128-1.822-18.555-2.81-28.211-2.81 c-79.326,0-143.866,64.54-143.866,143.866c0,57.016,33.438,106.255,81.656,129.518V178.475l-10.568,10.571 c-2.6,2.606-6.014,3.909-9.428,3.909c-3.411,0-6.818-1.303-9.424-3.909c-5.209-5.209-5.209-13.646,0-18.846l33.32-33.324 c0.006-0.006,0.006-0.006,0.006-0.006l9.427-9.424l9.419,9.412c0,0,0.006,0.012,0.018,0.018l31.102,31.102 c5.209,5.209,5.209,13.646,0,18.846c-5.209,5.212-13.646,5.212-18.852,0l-8.35-8.344v145.013c0,0.24-0.057,0.469-0.069,0.709 c11.412,2.924,23.305,4.636,35.614,4.636c79.33,0,143.881-64.54,143.881-143.863C328.847,124.975,291.894,73.49,239.573,51.936z"/>
     </svg>);*/
     return (<div className="boardContainer">
       <Controls height={height} width={width} mines={mines} new={this.new} />
-      <Field state={this.state} updateArea={this.updateArea} choose={this.choose} flag={this.flag} tool={tool} playing={playing} />
+      <Field state={this.state} position={position} updateArea={this.updateArea} choose={this.choose} flag={this.flag} tool={tool} playing={playing} />
       <NavBottom flags={mines - flags} time={time} mines={mines} tool={tool} updateTool={this.updateTool} width={width} />
     </div>)
   }

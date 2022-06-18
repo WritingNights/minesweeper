@@ -7,6 +7,32 @@ class Highscores extends React.Component {
     this.state = {
       info: {}
     };
+
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+  }
+
+  handleKeyPress(e) {
+    if (e.keyCode >= 48 && e.keyCode < 58 && this.props.showTab) {
+      let choice = e.keyCode - 48;
+      if (e.keyCode === 48) {
+        choice = 10;
+      }
+      if (choice <= this.props.highscores.length) {
+        this.setState({ info: this.props.highscores[this.props.highscores.length - choice] });
+      }
+    }
+
+    if (e.keyCode === 189) {
+      this.setState({ info: {} });
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyPress);
   }
 
   render() {
@@ -29,6 +55,16 @@ class Highscores extends React.Component {
         {this.props.highscores.map((obj, i) => {
           return <span key={i} title={`Height: ${obj.height}\nWidth: ${obj.width}\nMines: ${obj.mines}\nTime: ${obj.time}`} onClick={() => this.setState({ info: obj })}>{obj.score}</span>;
         })}
+      </div>
+      <div className="highGuide">
+        <div>
+          <div className="midBack"><span>1-</span><span>10</span></div>
+          <div>Details</div>
+        </div>
+        <div>
+          <div className="largeBack">-</div>
+          <div>X</div>
+        </div>
       </div>
     </aside>);
   }

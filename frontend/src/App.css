@@ -11,6 +11,25 @@ body {
 
 main {
   height: 100vh;
+  position: relative;
+}
+
+#coverScreen {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 30;
+  font-size: 8vw;
+  text-align: center;
+  font-family: 'Passion One', cursive;
+  font-weight: bold;
+  background-color: #77c292;
 }
 
 /* Playing Field */
@@ -272,6 +291,86 @@ main {
   top: 0;
   left: 0;
   cursor: pointer;
+}
+
+.highGuide {
+  min-height: 6rem;
+  width: 3rem;
+  position: absolute;
+  bottom: -8rem;
+  left: 8rem;
+  background-color: #fffa;
+  justify-items: center;
+  align-items: center;
+  border-radius: .25rem 0 0 .25rem;
+  display: grid;
+  grid-template-rows: repeat(2, 50%);
+}
+
+/* Guide */
+
+#guide {
+  min-height: 10rem;
+  width: 3rem;
+  position: absolute;
+  top: 4rem;
+  left: 0;
+  background-color: #fffa;
+  justify-items: center;
+  align-items: center;
+  border-radius: 0 .25rem .25rem 0;
+}
+
+.guideMain {
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+}
+
+.shiftGuide {
+  display: grid;
+  grid-template-rows: repeat(5, 20%);
+}
+
+#guide div, .highGuide div {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.largeBack {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.midBack {
+  margin: .4rem 0;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#guide div div:nth-child(1), .highGuide div div:nth-child(1) {
+  color: #6669
+}
+
+#guide > div div:nth-child(2), .highGuide > div div:nth-child(2) {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  text-shadow: 0 0 5px #fff;
+  text-align: center;
+  font-size: .8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
 }
 
 /* media queries */

@@ -18,7 +18,7 @@ const shovel = (<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="22p
 	<path fill="#FFDCA0" d="M229.518,317.798v167.72C229.518,500.144,241.374,512,256,512c14.626,0,26.482-11.856,26.482-26.482  v-167.72H229.518z M256,494.346c-4.875,0-8.827-3.952-8.827-8.827s3.952-8.827,8.827-8.827c4.875,0,8.827,3.952,8.827,8.827  S260.875,494.346,256,494.346z"/>
 </svg>);
 
-// add background-position manipulation
+const active = { backgroundColor: '#888c', boxShadow: 'inset 0 0 3px black' };
 
 const NavBottom = props => {
   return (<footer id="bottomNav" style={props.width < 16 ? {backgroundColor: '#a1835b', borderRadius: '.5rem', marginTop: '.25rem', boxShadow: '0 0 3px black' } : {}}>
@@ -29,8 +29,8 @@ const NavBottom = props => {
 			<div>{stopwatch} {props.time}</div>
 		</div>
 		<div className="botTag" style={props.width < 16 ? {boxShadow: 'none'} : {}}>
-			<div className="toolControls" style={props.tool ? { backgroundColor: 'grey' } : {}} onClick={() => props.updateTool("shovel")}>{shovel}</div>
-			<div className="toolControls" style={!props.tool ? { backgroundColor: 'grey' } : {}} onClick={() => props.updateTool("flag")}>{flag}</div>
+			<div className="toolControls" style={props.tool ? active : {}} onClick={() => props.updateTool("shovel")}>{shovel}</div>
+			<div className="toolControls" style={!props.tool ? active : {}} onClick={() => props.updateTool("flag")}>{flag}</div>
 		</div>
   </footer>);
 }

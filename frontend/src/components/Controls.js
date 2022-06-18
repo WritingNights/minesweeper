@@ -35,6 +35,7 @@ class Controls extends React.Component {
     }
 
     this.adj = this.adj.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   adj(change, inc, min, max) {
@@ -45,6 +46,45 @@ class Controls extends React.Component {
         this.setState({ mines: Math.round(this.state.height * this.state.width / 6.3) });
       }
     }
+  }
+
+  handleKeyPress(e) {
+    // r
+    if (e.keyCode === 82) {
+      this.props.new(this.state.height, this.state.width, this.state.mines);
+    }
+
+    if (e.shiftKey) {
+      const { winH, winW } = this.state;
+      const area = this.state.height * this.state.width;
+      // u
+      if (e.keyCode === 85) {
+        this.adj('height', -1, 5, Math.floor(winH / 25 - 7) < 30 ? Math.floor(winH / 25 - 7) : 30);
+      // i
+      } else if (e.keyCode === 73) {
+        this.adj('height', 1, 5, Math.floor(winH / 25 - 7) < 30 ? Math.floor(winH / 25 - 7) : 30);
+      // j
+      } else if (e.keyCode === 74) {
+        this.adj('width', -1, 5, Math.floor(winW / 25 - 4) < 60 ? Math.floor(winW / 25 - 4) : 60);
+      // k
+      } else if (e.keyCode === 75) {
+        this.adj('width', 1, 5, Math.floor(winW / 25 - 4) < 60 ? Math.floor(winW / 25 - 4) : 60);
+      // n
+      } else if (e.keyCode === 78) {
+        this.adj('mines', -1, Math.round(area / 8), Math.round(area / 4));
+      // m
+      } else if (e.keyCode === 77) {
+        this.adj('mines', 1, Math.round(area / 8), Math.round(area / 4));
+      }
+    }
+  }
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyPress);
   }
 
   render() {
@@ -95,9 +135,9 @@ class Controls extends React.Component {
     const { winH, winW } = this.state;
     return (<header id="controls" className="navMid">
       <div className="controls">
-        <div className="controlInput">{height} {this.state.height} <Adjustor min={5} max={Math.floor(winH / 25 - 7) < 30 ? Math.floor(winH / 25 - 7) : 30} value={this.state.height} adj={this.adj} name={"height"} />{/*<input type="number" onChange={e => this.setState({ height: Number(e.target.value), mines: Math.round(Number(e.target.value) * this.state.width / 6.3) })} />*/}</div>
-        <div className="controlInput">{width} {this.state.width} <Adjustor min={5} max={Math.floor(winW / 25 - 4) < 60 ? Math.floor(winW / 25 - 4) : 60} value={this.state.width} adj={this.adj} name={"width"} />{/*<input type="number" onChange={e => this.setState({ width: Number(e.target.value), mines: Math.round(Number(e.target.value) * this.state.height / 6.3) })} />*/}</div>
-        <div className="controlInput">{mine} {this.state.mines} <Adjustor min={min} max={max} value={this.state.mines} adj={this.adj} name={"mines"} />{/*<input type="number" onChange={e => this.setState({ mines: Number(e.target.value) })}/>*/}</div>
+        <div className="controlInput">{height} {this.state.height} <Adjustor min={5} max={Math.floor(winH / 25 - 7) < 30 ? Math.floor(winH / 25 - 7) : 30} value={this.state.height} adj={this.adj} name={"height"} /></div>
+        <div className="controlInput">{width} {this.state.width} <Adjustor min={5} max={Math.floor(winW / 25 - 4) < 60 ? Math.floor(winW / 25 - 4) : 60} value={this.state.width} adj={this.adj} name={"width"} /></div>
+        <div className="controlInput">{mine} {this.state.mines} <Adjustor min={min} max={max} value={this.state.mines} adj={this.adj} name={"mines"} /></div>
       </div>
       <div>
         <button className="newBtn" onClick={() => this.props.new(this.state.height, this.state.width, this.state.mines)}>New</button>

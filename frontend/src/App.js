@@ -1,8 +1,10 @@
 import React from "react";
 import './App.css';
+import gsap from "gsap";
 
 import Game from "./components/Game";
 import Highscores from "./components/Highscore";
+import Guide from "./components/Guide";
 
 class App extends React.Component {
   constructor(props) {
@@ -10,12 +12,15 @@ class App extends React.Component {
 
     this.state = {
       highscores: [],
-      showTab: false
+      showTab: false,
+      cover: true
     };
 
     this.newScore = this.newScore.bind(this);
     this.ascendSort = this.ascendSort.bind(this);
     this.toggleTab = this.toggleTab.bind(this);
+
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   newScore(score) {
@@ -51,10 +56,30 @@ class App extends React.Component {
     this.setState({ showTab: !this.state.showTab });
   }
 
+  handleKeyPress(e) {
+    if (e.keyCode === 72) {
+      this.toggleTab();
+    }
+  }
+
+  componentDidMount() {
+    const tl = gsap.timeline();
+    tl.fromTo('#coverScreen',
+      { display: 'flex', opacity: 1 },
+      { display: 'flex', opacity: 0, delay: 2, duration: 1, onComplete: () => this.setState({ cover: false }) });
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyPress);
+  }
+
   render() {
     return (<main>
+      <div id="coverScreen" style={this.state.cover ? { display: 'flex' } : { display: 'none' }}>Mix-Up<br/>Minesweeper</div>
       <Game newScore={this.newScore} />
       <Highscores highscores={this.state.highscores} showTab={this.state.showTab} toggleTab={this.toggleTab} />
+      <Guide />
     </main>);
   }
 };
